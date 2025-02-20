@@ -134,66 +134,6 @@
                     errorElement.innerText = "Error fetching user data.";
                 });
 
-
-
-            // function loginUser(event) {
-            //     event.preventDefault(); // Prevent form reload
-
-            //     const email = document.getElementById("email").value.trim();
-            //     const password = document.getElementById("password").value.trim();
-            //     const errorElement = document.getElementById("errorElement");
-
-            //     if (!email || !password) {
-            //         errorElement.innerText = "Please enter both email and password.";
-            //         return;
-            //     }
-
-            //     // Fetch user data from Google Apps Script
-
-            //     fetch('https://script.google.com/macros/s/AKfycbyhf2EZjzCgJAg3A4S9Zp0Uqin1RMSitWVXoCDyPsoEovy0xpFHOqScbYZYx6fHkk78/exec')
-            //         .then(response => response.json())
-            //         .then(data => {
-            //             console.log("Received Data:", data); // Debugging
-            //             if (!data || !data.data) {
-            //                 throw new Error("No data received");
-            //             }
-
-            //             const users = data.data; // Ensure it matches the API response
-            //             const user = users.find(user =>
-            //                 user.email.toLowerCase() === email.toLowerCase() &&
-            //                 user.password === password
-            //             );
-
-            //             if (user) {
-            //                 localStorage.setItem('loggedInUser', JSON.stringify(user));
-            //                 window.location.href = 'student.html';
-            //             } else {
-            //                 errorElement.innerText = "Invalid credentials!";
-            //             }
-            //         })
-            //         .catch(error => {
-            //             console.error("Error:", error);
-            //             errorElement.innerText = "Error fetching user data.";
-            //         });
-
-            // fetch('https://script.google.com/macros/s/AKfycbwvG76XdwLlFuTejPRDKhiZJHSNvMyVOPYWSSbDuJB61Nu7X5VlgCuSkDF4DWon2Mch/exec')
-            //     .then(response => response.json())
-            //     .then(data=> console.log(data))
-            //     .then(data => {
-            //         const users = data.data; // Change from data.records to data.data
-            //         const user = users.find(user => user.email === email && user.password === password);
-
-            //         if (user) {
-            //             localStorage.setItem('loggedInUser', JSON.stringify(user)); // Store user session
-            //             window.location.href = 'student.html'; // Redirect to home page
-            //         } else {
-            //             errorElement.innerText = "Invalid credentials!";
-            //         }
-            //     })
-            //     .catch(error => {
-            //         console.error('Error:', error);
-            //         errorElement.innerText = "Error fetching user data.";
-            //     });
         }
     </script>
 </body>
