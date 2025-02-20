@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+        body {
+            background: #172954;
+        }
+
+        .register-container {
+            max-width: 500px;
+            margin: 50px auto;
+        }
+
+        .card {
+            border-radius: 12px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+        }
+
+        .btn-success {
+            display: block;
+            margin: auto;
+            width: 50%;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .form-label {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .form-check-label {
+            font-size: 16px;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="register-container">
+        <div class="card">
+            <div class="card-body">
+                <div class="card-header mb-3">
+                    Registration Form
+                </div>
+                <form id="registrationForm">
+                    <div class="mb-3">
+                        <label class="form-label">First Name</label>
+                        <input type="text" class="form-control" id="firstName" required>
+                        <small class="error-message" id="firstNameError"></small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Last Name</label>
+                        <input type="text" class="form-control" id="lastName" required>
+                        <small class="error-message" id="lastNameError"></small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Date of Birth</label>
+                        <input type="date" class="form-control" id="dob" required>
+                        <small class="error-message" id="dobError"></small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">E-mail</label>
+                        <input type="email" class="form-control" id="email" required>
+                        <small class="error-message" id="emailError"></small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Mobile No</label>
+                        <input type="tel" class="form-control" id="mobile" required>
+                        <small class="error-message" id="mobileError"></small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Address</label>
+                        <textarea class="form-control" id="address" rows="2" required></textarea>
+                        <small class="error-message" id="addressError"></small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Guardian Name</label>
+                        <input type="text" class="form-control" id="guardianName" required>
+                        <small class="error-message" id="guardianNameError"></small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Guardian Mobile No</label>
+                        <input type="tel" class="form-control" id="guardianMobile" required>
+                        <small class="error-message" id="guardianMobileError"></small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" required>
+                        <small class="error-message" id="passwordError"></small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Confirm Password</label>
+                        <input type="password" class="form-control" id="confirmPassword" required>
+                        <small class="error-message" id="confirmPasswordError"></small>
+                    </div>
+                    <div class="form-group mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="gridCheck">
+                            <label class="form-check-label" for="gridCheck">
+                                Check me out
+                            </label>
+                        </div>
+                        <small class="error-message" id="gridCheckError"></small>
+                    </div>
+                    <button type="button" class="btn btn-success" onclick="submitForm()">Register</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showError(inputId, message) {
+            document.getElementById(inputId + 'Error').innerText = message;
+        }
+
+        function clearErrors() {
+            document.querySelectorAll('.error-message').forEach(el => el.innerText = '');
+        }
+        function submitForm() {
+            clearErrors();
+
+            // Assign input values
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const dob = document.getElementById('dob').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const mobile = document.getElementById('mobile').value.trim();
+            const address = document.getElementById('address').value.trim();
+            const guardianName = document.getElementById('guardianName').value.trim();
+            const guardianMobile = document.getElementById('guardianMobile').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const confirmPassword = document.getElementById('confirmPassword').value.trim();
+            const checkbox = document.getElementById('gridCheck');
+
+            let valid = true;
+
+            // Validation checks
+            if (!/^[A-Za-z]+$/.test(firstName)) {
+                showError('firstName', 'First name should contain only letters.');
+                valid = false;
+            }
+            if (!/^[A-Za-z]+$/.test(lastName)) {
+                showError('lastName', 'Last name should contain only letters.');
+                valid = false;
+            }
+            if (!/^\d{10}$/.test(mobile)) {
+                showError('mobile', 'Mobile number should be 10 digits.');
+                valid = false;
+            }
+            if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
+                showError('email', 'Invalid email format.');
+                valid = false;
+            }
+            if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}/.test(password)) {
+                showError('password', 'Password must have at least 6 characters, one uppercase, one lowercase, one digit, and one special character.');
+                valid = false;
+            }
+            if (password !== confirmPassword) {
+                showError('confirmPassword', 'Passwords do not match.');
+                valid = false;
+            }
+            if (!checkbox.checked) {
+                showError('gridCheck', 'You must agree to the terms.');
+                valid = false;
+            }
+
+            if (!valid) return;
+
+            // FormData for submission
+            const formData = new FormData();
+            formData.append("firstName", firstName);
+            formData.append("lastName", lastName);
+            formData.append("dob", dob);
+            formData.append("email", email);
+            formData.append("mobile", mobile);
+            formData.append("address", address);
+            formData.append("guardianName", guardianName);
+            formData.append("guardianMobile", guardianMobile);
+            formData.append("password",password);
+
+            // Google Apps Script URL (Ensure it's deployed correctly)
+            fetch('https://script.google.com/macros/s/AKfycbxRyof_L86h0MOM9uMajcgRtJhd1JEb3M-tmPYPdc4BkssEgZ6JpSOWB2jodtI7YSf4/exec', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "success") {
+                        alert('🎉 Registration Successful!');
+                        document.getElementById("registrationForm").reset(); // Reset form after submission
+                    } else {
+                        alert('❌ Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('⚠️ Error occurred while saving data.');
+                });
+        }
+
+    </script>
+
+</body>
+
+</html>
+
+
