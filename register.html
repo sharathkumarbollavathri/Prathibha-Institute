@@ -112,6 +112,17 @@
                         <input type="tel" class="form-control" id="guardianMobile" required>
                         <small class="error-message" id="guardianMobileError"></small>
                     </div>
+
+                    <!-- Added Radio Buttons for Student and Faculty -->
+                    <div class="mb-3">
+                        <label class="form-label">Register As</label><br>
+                        <input type="radio" name="role" value="Student" id="studentRadio" required>
+                        <label for="studentRadio">Student</label>
+                        <input type="radio" name="role" value="Faculty" id="facultyRadio" required>
+                        <label for="facultyRadio">Faculty</label>
+                        <small class="error-message" id="roleError"></small>
+                    </div>
+
                     <div class="mb-3">
                         <label class="form-label">Password</label>
                         <input type="password" class="form-control" id="password" required>
@@ -148,7 +159,6 @@
         function submitForm() {
             clearErrors();
 
-            // Assign input values
             const firstName = document.getElementById('firstName').value.trim();
             const lastName = document.getElementById('lastName').value.trim();
             const dob = document.getElementById('dob').value.trim();
@@ -160,9 +170,15 @@
             const password = document.getElementById('password').value.trim();
             const confirmPassword = document.getElementById('confirmPassword').value.trim();
             const checkbox = document.getElementById('gridCheck');
+            // Get selected role
+            const selectedRole = document.querySelector('input[name="role"]:checked');
+            if (!selectedRole) {
+                showError('role', 'Please select Student or Faculty.');
+                return;
+            }
+            const role = selectedRole.value;
 
             let valid = true;
-
             // Validation checks
             if (!/^[A-Za-z]+$/.test(firstName)) {
                 showError('firstName', 'First name should contain only letters.');
@@ -192,10 +208,8 @@
                 showError('gridCheck', 'You must agree to the terms.');
                 valid = false;
             }
-
             if (!valid) return;
 
-            // FormData for submission
             const formData = new FormData();
             formData.append("firstName", firstName);
             formData.append("lastName", lastName);
@@ -205,28 +219,20 @@
             formData.append("address", address);
             formData.append("guardianName", guardianName);
             formData.append("guardianMobile", guardianMobile);
-            formData.append("password",password);
+            formData.append("password", password);
+            formData.append("role", role);
 
-            // Google Apps Script URL (Ensure it's deployed correctly)
-            fetch('https://script.google.com/macros/s/AKfycbxRyof_L86h0MOM9uMajcgRtJhd1JEb3M-tmPYPdc4BkssEgZ6JpSOWB2jodtI7YSf4/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbzggoD35igrIz_c1OPSZAiZHrBojfE_eleB3aiM03C4vN3G4yIL-KaG7UEqft2vpahf/exec', {
                 method: 'POST',
                 body: formData
             })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.status === "success") {
-                        alert('🎉 Registration Successful!');
-                        document.getElementById("registrationForm").reset(); // Reset form after submission
-                    } else {
-                        alert('❌ Error: ' + data.message);
-                    }
+                    alert(data.status === "success" ? "🎉 Registration Successful!" : "❌ Error: " + data.message);
+                    document.getElementById("registrationForm").reset();
                 })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('⚠️ Error occurred while saving data.');
-                });
+                .catch(error => alert('⚠️ Error occurred while saving data.'));
         }
-
     </script>
 
 </body>
