@@ -16,9 +16,12 @@
         .register-container {
             max-width: 500px;
             margin: 50px auto;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(217, 18, 18, 0.1);
         }
 
         .card {
+            max-width: 500px;
             border-radius: 12px;
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
         }
@@ -60,6 +63,10 @@
             font-size: 14px;
             margin-top: 5px;
         }
+
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 
@@ -71,12 +78,28 @@
                 <div class="card-header mb-3">
                     Registration Form
                 </div>
+                <!-- Role Selection -->
+                <div class="mb-3">
+                    <label class="form-label">Register As</label><br>
+                    <input type="radio" name="role" value="Student" id="studentRadio" onclick="toggleForm()" required>
+                    <label for="studentRadio">Student</label>
+                    <input type="radio" name="role" value="Faculty" id="facultyRadio" onclick="toggleForm()" required>
+                    <label for="facultyRadio">Faculty</label>
+                    <small class="error-message" id="roleError"></small>
+                </div>
                 <form id="registrationForm">
+                    <!-- Common Fields -->
+                    <div class="mb-3">
+                        <label class="form-label">Upload Profile Picture</label>
+                        <input type="file" class="form-control" id="profilePicture" accept="image/*">
+                        <small class="error-message" id="profilePictureError"></small>
+                    </div>
                     <div class="mb-3">
                         <label class="form-label">First Name</label>
                         <input type="text" class="form-control" id="firstName" required>
                         <small class="error-message" id="firstNameError"></small>
                     </div>
+
                     <div class="mb-3">
                         <label class="form-label">Last Name</label>
                         <input type="text" class="form-control" id="lastName" required>
@@ -92,6 +115,7 @@
                         <input type="email" class="form-control" id="email" required>
                         <small class="error-message" id="emailError"></small>
                     </div>
+
                     <div class="mb-3">
                         <label class="form-label">Mobile No</label>
                         <input type="tel" class="form-control" id="mobile" required>
@@ -102,32 +126,47 @@
                         <textarea class="form-control" id="address" rows="2" required></textarea>
                         <small class="error-message" id="addressError"></small>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Guardian Name</label>
-                        <input type="text" class="form-control" id="guardianName" required>
-                        <small class="error-message" id="guardianNameError"></small>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Guardian Mobile No</label>
-                        <input type="tel" class="form-control" id="guardianMobile" required>
-                        <small class="error-message" id="guardianMobileError"></small>
+
+
+                    <!-- Student-Specific Fields -->
+                    <div id="studentFields">
+
+
+                        <div class="mb-3">
+                            <label class="form-label">Guardian Name</label>
+                            <input type="text" class="form-control" id="guardianName" required>
+                            <small class="error-message" id="guardianNameError"></small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Guardian Mobile No</label>
+                            <input type="tel" class="form-control" id="guardianMobile" required>
+                            <small class="error-message" id="guardianMobileError"></small>
+                        </div>
                     </div>
 
-                    <!-- Added Radio Buttons for Student and Faculty -->
-                    <div class="mb-3">
-                        <label class="form-label">Register As</label><br>
-                        <input type="radio" name="role" value="Student" id="studentRadio" required>
-                        <label for="studentRadio">Student</label>
-                        <input type="radio" name="role" value="Faculty" id="facultyRadio" required>
-                        <label for="facultyRadio">Faculty</label>
-                        <small class="error-message" id="roleError"></small>
+                    <!-- Faculty-Specific Fields -->
+                    <div id="facultyFields" class="hidden">
+                        <div class="mb-3">
+                            <label class="form-label">Department</label>
+                            <input type="text" class="form-control" id="department" required>
+                            <small class="error-message" id="departmentError"></small>
+                        </div>
+
+                        <!-- <div class="mb-3">
+                            <label class="form-label">Employee ID</label>
+                            <input type="text" class="form-control" id="employeeId" required>
+                            <small class="error-message" id="employeeIdError"></small>
+                        </div> -->
                     </div>
+
 
                     <div class="mb-3">
                         <label class="form-label">Password</label>
                         <input type="password" class="form-control" id="password" required>
                         <small class="error-message" id="passwordError"></small>
                     </div>
+
                     <div class="mb-3">
                         <label class="form-label">Confirm Password</label>
                         <input type="password" class="form-control" id="confirmPassword" required>
@@ -156,6 +195,12 @@
         function clearErrors() {
             document.querySelectorAll('.error-message').forEach(el => el.innerText = '');
         }
+        function toggleForm() {
+            const isStudent = document.getElementById("studentRadio").checked;
+            document.getElementById("studentFields").style.display = isStudent ? "block" : "none";
+            document.getElementById("facultyFields").style.display = isStudent ? "none" : "block";
+        }
+
         function submitForm() {
             clearErrors();
 
@@ -170,11 +215,19 @@
             const password = document.getElementById('password').value.trim();
             const confirmPassword = document.getElementById('confirmPassword').value.trim();
             const checkbox = document.getElementById('gridCheck');
+            //DOB validation
+            const today = new Date();
+            const dobDate = new Date(dob);
+            if (dobDate >= today) {
+                showError('dob', 'Date of Birth cannot be in the future.');
+                valid = false;
+            }
+
             // Get selected role
             const selectedRole = document.querySelector('input[name="role"]:checked');
             if (!selectedRole) {
                 showError('role', 'Please select Student or Faculty.');
-                return;
+                valid = false;
             }
             const role = selectedRole.value;
 
@@ -208,6 +261,25 @@
                 showError('gridCheck', 'You must agree to the terms.');
                 valid = false;
             }
+            if (role === "Faculty" && document.getElementById('department').value.trim() === '') {
+                showError('department', 'Department is required for faculty.');
+                valid = false;
+            }
+            //PROFILE PIC validation
+            const profilePic = document.getElementById('profilePicture').files[0];
+            if (profilePic) {
+                const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+                if (!allowedTypes.includes(profilePic.type)) {
+                    showError('profilePicture', 'Only JPG, PNG, and GIF files are allowed.');
+                    valid = false;
+                }
+                if (profilePic.size > 2 * 1024 * 1024) { // 2MB limit
+                    showError('profilePicture', 'File size must be less than 2MB.');
+                    valid = false;
+                }
+            }
+
+
             if (!valid) return;
 
             const formData = new FormData();
@@ -222,14 +294,29 @@
             formData.append("password", password);
             formData.append("role", role);
 
-            fetch('https://script.google.com/macros/s/AKfycbzggoD35igrIz_c1OPSZAiZHrBojfE_eleB3aiM03C4vN3G4yIL-KaG7UEqft2vpahf/exec', {
+            if (role === "Student") {
+                // formData.append("dob", document.getElementById('dob').value);
+                formData.append("guardianName", document.getElementById('guardianName').value);
+                formData.append("guardianMobile", document.getElementById('guardianMobile').value);
+            } else {
+                // formData.append("dob", document.getElementById('dob').value);
+                formData.append("department", document.getElementById('department').value);
+
+            }
+
+            //Uses code.gs file link
+            fetch('https://script.google.com/macros/s/AKfycbyzh8FVuVBYoEaIJfMU4fHISKcaNL5Chrsgkq1lH_dr9I0n8hIgn6yGDknKu707EjZN/exec', {
                 method: 'POST',
                 body: formData
             })
                 .then(response => response.json())
                 .then(data => {
-                    alert(data.status === "success" ? "🎉 Registration Successful!" : "❌ Error: " + data.message);
-                    document.getElementById("registrationForm").reset();
+                    if (data.status === "success") {
+                        alert('🎉 Registration Successful!');
+                        document.getElementById("registrationForm").reset(); // Reset form after submission
+                    } else {
+                        alert('❌ Error: ' + data.message);
+                    }
                 })
                 .catch(error => alert('⚠️ Error occurred while saving data.'));
         }
@@ -238,5 +325,3 @@
 </body>
 
 </html>
-
-

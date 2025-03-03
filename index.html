@@ -78,11 +78,13 @@
     </div>
 
     <script>
+        let userType = "";
 
-        function showLogin(userType) {
+        function showLogin(type) {
+            userType = type;
             document.getElementById('imageContainer').style.display = 'none';
             document.getElementById('loginContainer').style.display = 'block';
-            document.getElementById('loginTitle').innerText = userType + ' Login';
+            document.getElementById('loginTitle').innerText = type + ' Login';
             document.getElementById('errorElement').innerText = ''; // Clear error on switch
         }
 
@@ -103,7 +105,7 @@
                 return;
             }
 
-            fetch('https://script.google.com/macros/s/AKfycbyfKowi3276m_Yo1PKukPcW6mNRTrVxlYIv_U8UDbOGtx_ihxKeicW__pq8szrw9I43/exec')
+            fetch(`https://script.google.com/macros/s/AKfycbzsQKZtxN4lNYxmh3Ahk2hp9Kztgqa9v8uZqdMkH04lvyTFVxyqBh-jJ4gt7TSB_HWK/exec?userType=${userType}`)
                 .then(response => response.json())
                 .then(data => {
                     console.log("Received Data:", data); // Debug API response
@@ -123,7 +125,12 @@
                     if (user) {
                         console.log("Login Success:", user);
                         localStorage.setItem('loggedInUser', JSON.stringify(user)); // Store user session
-                        window.location.href = 'student.html';
+
+                        if (userType === "Student") {
+                            window.location.href = 'student.html';
+                        } else if (userType === "Faculty") {
+                            window.location.href = 'teacher.html';
+                        }
                     } else {
                         console.log("Login Failed: Invalid credentials!");
                         errorElement.innerText = "Invalid credentials!";
@@ -133,7 +140,6 @@
                     console.error("Error:", error);
                     errorElement.innerText = "Error fetching user data.";
                 });
-
         }
     </script>
 </body>

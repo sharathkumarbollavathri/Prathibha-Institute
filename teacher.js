@@ -121,3 +121,13 @@ function showStudentDetails(rollNo) {
     const student = studentDetails[rollNo];
     alert(`Name: ${student.name}\nDOB: ${student.dob}\nParent: ${student.parentName}\nMobile: ${student.mobileNo}\nAddress: ${student.address}\nFee Due: ${student.feeDue}`);
 }
+// teacher.js
+
+// Function to handle logout
+function logout() {
+    // Redirect to the dashboard page (replace 'dashboard.html' with your actual dashboard page URL)
+    window.location.href = 'index.html';
+}
+
+// Add event listener to the logout button
+document.getElementById('logoutBtn').addEventListener('click', logout);

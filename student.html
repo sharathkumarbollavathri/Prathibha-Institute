@@ -208,8 +208,8 @@
             oldPassword: oldPassword,
             newPassword: newPassword
         };
-
-        fetch("https://script.google.com/macros/s/AKfycbxgaXbWdWWfBJ0DmTcK5nVelMhjGCN4IAi7g_H_uxGI-J8YHR77VR4IbT5nRdTpJ9pz/exec", {
+        //Uses fetch.gs file link
+        fetch("https://script.google.com/macros/s/AKfycbyfA9zjGnpxVR_D04cs189IBzOHMDJDhaA-2fXEYiHDmU1R3W5xgpkEfDEBeoL8dN2L/exec", {
             method: "POST",
             body: JSON.stringify(requestData),
             headers: { "Content-Type": "application/json" }
