@@ -1,5 +1,161 @@
 <!DOCTYPE html>
 <html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        .navbar { background-color: #007bff; }
+        .navbar-brand img { height: 50px; }
+        .dashboard-container { text-align: center; margin-top: 100px; }
+        .dashboard-buttons { margin-top: 20px; }
+        .login-container { display: none; margin-top: 20px; text-align: center; }
+        .image-container { display: block; margin-top: 20px; text-align: center; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <img src="./images.jpeg" alt="Institute Logo">
+            </a>
+            <div class="ms-auto">
+                <a href="./register.html" class="btn btn-light">Register</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container dashboard-container">
+        <div class="dashboard-buttons">
+            <button class="btn btn-info m-2" onclick="showHome()">Home</button>
+            <button class="btn btn-primary m-2" onclick="showLogin('Student')">Student</button>
+            <button class="btn btn-secondary m-2" onclick="showLogin('Faculty')">Faculty</button>
+            <button class="btn btn-dark m-2" onclick="showLogin('Admin')">Admin</button>
+        </div>
+        <div class="image-container" id="imageContainer">
+            <img src="./software logo.png" alt="Dashboard Image" class="img-fluid">
+        </div>
+        <div class="login-container" id="loginContainer">
+            <h3 id="loginTitle"></h3>
+            <form onsubmit="loginUser(event)">
+                <div class="mb-3">
+                    <input type="text" id="email" class="form-control" placeholder="Email">
+                </div>
+                <div class="mb-3">
+                    <input type="password" id="password" class="form-control" placeholder="Password">
+                </div>
+                <button type="submit" class="btn btn-success">Login</button>
+            </form>
+            <p id="errorElement" class="text-danger mt-2"></p>
+        </div>
+    </div>
+
+    <script>
+        let userType = "";
+    
+        function showLogin(type) {
+            userType = type;
+            console.log("User type set to:", userType); // Debug log
+            document.getElementById('imageContainer').style.display = 'none';
+            document.getElementById('loginContainer').style.display = 'block';
+            document.getElementById('loginTitle').innerText = type + ' Login';
+            document.getElementById('errorElement').innerText = '';
+        }
+    
+        function showHome() {
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('imageContainer').style.display = 'block';
+        }
+    
+        function loginUser(event) {
+            event.preventDefault();
+    
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value.trim();
+            const errorElement = document.getElementById("errorElement");
+            if (!email || !password) {
+                errorElement.innerText = "Please enter both email and password.";
+                return;
+            }
+    
+            let deviceId = localStorage.getItem("deviceId");
+            if (!deviceId) {
+                deviceId = "device_" + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem("deviceId", deviceId);
+            }
+    
+            console.log("Sending login request:", { action: 'login', role: userType, email, password, deviceId }); // Debug log
+    
+            fetch(`https://script.google.com/macros/s/AKfycbwiFAy6qmyBOOIDZX5RwqRd_UGiHtodylOsuvO8QJXhStf27_Rr8vdlF2f4laxwMcXA/exec`, {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: new URLSearchParams({
+                    action: 'login',
+                    role: userType,
+                    email: email,
+                    password: password,
+                    deviceId: deviceId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Response from server:", data); // Debug log
+                if (data.status === "success") {
+                    localStorage.setItem('loggedInUser', JSON.stringify({ email, deviceId }));
+    
+                    if (data.multipleDevices === "Yes") {
+                        alert("Warning: Multiple login attempts detected from different devices!");
+                    }
+    
+                    if (userType === "Student") {
+                        window.location.href = 'student.html';
+                    } else if (userType === "Faculty") {
+                        window.location.href = 'teacher.html';
+                    } else if (userType === "Admin") {
+                        window.location.href = 'admin.html';
+                    }
+                } else if (data.status === "device_error") {
+                    errorElement.innerText = "Login failed: You are already logged in on another device.";
+                } else {
+                    errorElement.innerText = "Invalid credentials or action not supported!";
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                errorElement.innerText = "Error fetching user data.";
+            });
+        }
+    
+        function logoutUser(email, deviceId) {
+            fetch(`https://script.google.com/macros/s/AKfycbwiFAy6qmyBOOIDZX5RwqRd_UGiHtodylOsuvO8QJXhStf27_Rr8vdlF2f4laxwMcXA/exec`, {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: new URLSearchParams({
+                    action: "logout",
+                    email: email,
+                    deviceId: deviceId,
+                    role: userType
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    console.log("Logout successful!");
+                    localStorage.removeItem("deviceId");
+                    localStorage.removeItem("loggedInUser");
+                    window.location.href = "index.html";
+                }
+            })
+            .catch(error => console.error("Error logging out:", error));
+        }
+    </script>
+</body>
+</html>
+
+<!-- <!DOCTYPE html>
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -40,7 +196,7 @@
 </head>
 
 <body>
-    <!-- Navbar -->
+    Navbar
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">
@@ -54,10 +210,11 @@
 
     <div class="container dashboard-container">
         <div class="dashboard-buttons">
+            <button class="btn btn-info m-2" onclick="showHome()">Home</button>
             <button class="btn btn-primary m-2" onclick="showLogin('Student')">Student</button>
             <button class="btn btn-secondary m-2" onclick="showLogin('Faculty')">Faculty</button>
             <button class="btn btn-dark m-2" onclick="showLogin('Admin')">Admin</button>
-            <button class="btn btn-info m-2" onclick="showHome()">Home</button>
+
         </div>
         <div class="image-container" id="imageContainer">
             <img src="./software logo.png" alt="Dashboard Image" class="img-fluid">
@@ -73,7 +230,7 @@
                 </div>
                 <button type="submit" class="btn btn-success">Login</button>
             </form>
-            <p id="errorElement" class="text-danger mt-2"></p> <!-- Error message -->
+            <p id="errorElement" class="text-danger mt-2"></p> <!-- Error message 
         </div>
     </div>
 
@@ -93,46 +250,116 @@
             document.getElementById('imageContainer').style.display = 'block';
         }
 
-        function loginUser(event) {
-            event.preventDefault(); // Prevent form reload
+        // function loginUser(event) {
+        //     event.preventDefault();
+
+        //     const email = document.getElementById("email").value.trim();
+        //     const password = document.getElementById("password").value.trim();
+        //     const errorElement = document.getElementById("errorElement");
+
+        //     if (!email || !password) {
+        //         errorElement.innerText = "Please enter both email and password.";
+        //         return;
+        //     }
+
+        //     // Generate a unique device ID
+        //     let deviceId = localStorage.getItem("deviceId");
+        //     if (!deviceId) {
+        //         deviceId = "device_" + Math.random().toString(36).substr(2, 9);
+        //         localStorage.setItem("deviceId", deviceId);
+        //     }
+
+        //     fetch(`https://script.google.com/macros/s/AKfycbwnwVdlFNgdlPDQ_GvlcdZTHJj-mj3WB3sTXLvBaDGtev8uHlxPF3YVMBESyz3qTyFh/exec`, {
+        //         method: "POST",
+        //         headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        //         body: new URLSearchParams({
+        //             action: 'login', // <-- ADD THIS LINE
+
+
+        //             role: userType,
+        //             email: email,
+        //             password: password,
+        //             deviceId: deviceId
+        //         })
+
+        //         // body: new URLSearchParams({
+        //         //     role: userType,
+        //         //     email: email,
+        //         //     password: password,
+        //         //     deviceId: deviceId
+        //         // })
+        //     })
+        //         .then(response => response.json())
+        //         .then(data => {
+        //             if (data.status === "success") {
+        //                 localStorage.setItem('loggedInUser', JSON.stringify({ email, deviceId }));
+
+        //                 // Check if user is using multiple devices
+        //                 if (data.deviceUsed === "Yes") {
+        //                     alert("Warning: You have logged in from multiple devices!");
+        //                 }
+
+        //                 if (userType === "Student") {
+        //                     window.location.href = 'student.html';
+        //                 } else if (userType === "Faculty") {
+        //                     window.location.href = 'teacher.html';
+        //                 } else if (userType === "Admin") {
+        //                     window.location.href = 'admin.html';  // Ensure admin.html exists
+        //                 }
+        //             } else {
+        //                 errorElement.innerText = "Invalid credentials!";
+        //             }
+        //         })
+        //         .catch(error => {
+        //             console.error("Error:", error);
+        //             errorElement.innerText = "Error fetching user data.";
+        //         });
+        // }
+
+
+        function loginUser(event) {  //***Its Working***
+            event.preventDefault();
 
             const email = document.getElementById("email").value.trim();
             const password = document.getElementById("password").value.trim();
             const errorElement = document.getElementById("errorElement");
-
             if (!email || !password) {
                 errorElement.innerText = "Please enter both email and password.";
                 return;
             }
 
-            fetch(`https://script.google.com/macros/s/AKfycbzsQKZtxN4lNYxmh3Ahk2hp9Kztgqa9v8uZqdMkH04lvyTFVxyqBh-jJ4gt7TSB_HWK/exec?userType=${userType}`)
+            // Generate a unique device ID (Use localStorage or navigator)
+            let deviceId = localStorage.getItem("deviceId");
+            if (!deviceId) {
+                deviceId = "device_" + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem("deviceId", deviceId);
+            }
+
+            //fetch.gs 
+            fetch(`https://script.google.com/macros/s/AKfycbx16HE0j5ac-Npu4rkfYwPeZWANuFLW38BD9BuzF4rAD_dJLndnYTaifb2WIZHfkWQL/exec`, {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: new URLSearchParams({
+                    action: 'login',
+                    role: userType,
+                    email: email,
+                    password: password,
+                    deviceId: deviceId
+                })
+            })
                 .then(response => response.json())
                 .then(data => {
-                    console.log("Received Data:", data); // Debug API response
-                    if (!data || !data.records) {
-                        throw new Error("No data received");
-                    }
-
-                    const users = data.records;
-
-                    // Check if user exists
-                    const user = users.find(user => {
-                        console.log(`Checking: ${user.email} === ${email} && ${user.password} === ${password}`);
-                        return user.email.toLowerCase().trim() === email.toLowerCase().trim() &&
-                            user.password.trim() === password.trim();
-                    });
-
-                    if (user) {
-                        console.log("Login Success:", user);
-                        localStorage.setItem('loggedInUser', JSON.stringify(user)); // Store user session
+                    if (data.status === "success") {
+                        localStorage.setItem('loggedInUser', JSON.stringify({ email, deviceId }));
 
                         if (userType === "Student") {
                             window.location.href = 'student.html';
                         } else if (userType === "Faculty") {
                             window.location.href = 'teacher.html';
+                        } else if (userType === "Admin") {
+                            window.location.href = 'admin.html';  // Ensure admin.html exists
                         }
                     } else {
-                        console.log("Login Failed: Invalid credentials!");
                         errorElement.innerText = "Invalid credentials!";
                     }
                 })
@@ -141,7 +368,84 @@
                     errorElement.innerText = "Error fetching user data.";
                 });
         }
+
+        function logoutUser(email, deviceId) {
+            fetch("https://script.google.com/macros/s/AKfycbwnwVdlFNgdlPDQ_GvlcdZTHJj-mj3WB3sTXLvBaDGtev8uHlxPF3YVMBESyz3qTyFh/exec", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: new URLSearchParams({
+                    action: "logout",
+                    email: email,
+                    deviceId: deviceId
+                })
+
+                // body: new URLSearchParams({
+                //     action: "logout",
+                //     email: email,
+                //     deviceId: deviceId
+                // })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "success") {
+                        console.log("Logout successful!");
+                        localStorage.removeItem("deviceId"); // Remove local device tracking
+                        window.location.href = "index.html"; // Redirect to login page
+                    }
+                })
+                .catch(error => console.error("Error logging out:", error));
+        }
+
+        // function loginUser(event) { //***Active function***
+        //     event.preventDefault(); // Prevent form reload
+
+        //     const email = document.getElementById("email").value.trim();
+        //     const password = document.getElementById("password").value.trim();
+        //     const errorElement = document.getElementById("errorElement");
+
+        //     if (!email || !password) {
+        //         errorElement.innerText = "Please enter both email and password.";
+        //         return;
+        //     }
+
+        //     // Use fetch.gs URL
+        //     fetch(`https://script.google.com/macros/s/AKfycbzExm-GDYy7vmwiy3ROcs9cgEIfJ3tg2vwFjSdtmueiBQWQzJNICIubM7FC-bC1w1BK/exec?userType=${userType}`)
+        //         .then(response => response.json())
+        //         .then(data => {
+        //             console.log("Received Data:", data); // Debug API response
+        //             if (!data || !data.records) {
+        //                 throw new Error("No data received");
+        //             }
+
+        //             const users = data.records;
+
+        //             // Check if user exists
+        //             const user = users.find(user => {
+        //                 console.log(`Checking: ${user.email} === ${email} && ${user.password} === ${password}`);
+        //                 return user.email.toLowerCase().trim() === email.toLowerCase().trim() &&
+        //                     user.password.trim() === password.trim();
+        //             });
+
+        //             if (user) {
+        //                 console.log("Login Success:", user);
+        //                 localStorage.setItem('loggedInUser', JSON.stringify(user)); // Store user session
+
+        //                 if (userType === "Student") {
+        //                     window.location.href = 'student.html';
+        //                 } else if (userType === "Faculty") {
+        //                     window.location.href = 'teacher.html';
+        //                 }
+        //             } else {
+        //                 console.log("Login Failed: Invalid credentials!");
+        //                 errorElement.innerText = "Invalid credentials!";
+        //             }
+        //         })
+        //         .catch(error => {
+        //             console.error("Error:", error);
+        //             errorElement.innerText = "Error fetching user data.";
+        //         });
+        // }
     </script>
 </body>
 
-</html>
+</html> -->

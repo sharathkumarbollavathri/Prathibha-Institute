@@ -67,6 +67,27 @@
         .hidden {
             display: none;
         }
+
+        .text-info {
+            color: #0dcaf0 !important;
+        }
+
+        .text-info:hover {
+            text-decoration: underline;
+        }
+        /* Set a grey background color and center the text of the "sign in" section */
+.signin {
+  background-color: #f1f1f1;
+  text-align: center;
+}
+/* Add a blue text color to links */
+a {
+  color: dodgerblue;
+}
+/* Add padding to containers */
+.container {
+  padding: 16px;
+}
     </style>
 </head>
 
@@ -183,6 +204,10 @@
                     </div>
                     <button type="button" class="btn btn-success" onclick="submitForm()">Register</button>
                 </form>
+                <!-- New Login Link -->
+                <div class="container signin">
+                    <p>Already have an account? <a href="index.html">Sign in</a>.</p>
+                  </div>
             </div>
         </div>
     </div>
@@ -305,7 +330,7 @@
             }
 
             //Uses code.gs file link
-            fetch('https://script.google.com/macros/s/AKfycbyzh8FVuVBYoEaIJfMU4fHISKcaNL5Chrsgkq1lH_dr9I0n8hIgn6yGDknKu707EjZN/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbxYbVzbWddFpE12KgvAAPO-xaG1WaJi71thaoxbkMjChomz4qr8oVmLsIr8RvOhBIPe/exec', {
                 method: 'POST',
                 body: formData
             })
@@ -314,12 +339,18 @@
                     if (data.status === "success") {
                         alert('🎉 Registration Successful!');
                         document.getElementById("registrationForm").reset(); // Reset form after submission
-                    } else {
+                    }
+                     else {
                         alert('❌ Error: ' + data.message);
                     }
                 })
                 .catch(error => alert('⚠️ Error occurred while saving data.'));
+
+            
+                
+
         }
+
     </script>
 
 </body>

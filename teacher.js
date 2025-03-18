@@ -1,4 +1,4 @@
-// Switch sections based on button clicks
+// Switch sections based on button clicks    //***active current code***
 document.getElementById('homeBtn').addEventListener('click', () => {
     toggleSection('homeSection');
 });

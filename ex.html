@@ -1,0 +1,27 @@
+ <!DOCTYPE html>
+<html>
+<head>
+  <title>Update Google Sheet with Form</title>
+</head>
+<body>
+
+<h2>Click YES or NO</h2>
+
+ YES Button Form 
+<form action="https://script.google.com/macros/s/AKfycbxcBleHUCvTeDv6hoW6rl2QF8JaMtlaF_4p3w3FQqVr3rLJOGPVRYmgngVHgpnNFZQB/exec" method="get" target="responseFrame">
+  <input type="hidden" name="action" value="yes">
+  <input type="submit" value="YES">
+</form>
+
+ NO Button Form 
+<form action="https://script.google.com/macros/s/AKfycbxcBleHUCvTeDv6hoW6rl2QF8JaMtlaF_4p3w3FQqVr3rLJOGPVRYmgngVHgpnNFZQB/exec" method="get" target="responseFrame">
+  <input type="hidden" name="action" value="no">
+  <input type="submit" value="NO">
+</form>
+
+Display the response here 
+<iframe name="responseFrame" style="width:300px; height:50px; border:none;"></iframe>
+
+</body>
+</html>
+
